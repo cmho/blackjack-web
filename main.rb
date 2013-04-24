@@ -14,8 +14,16 @@ end
 post '/new_player' do
 	if params[:name].nil? or params[:name].empty?
 		@error = "You must enter your name."
-		erb :new_player
-	else
-
+		halt erb(:new_player)
 	end
+
+	redirect '/game'
+end
+
+get '/game' do
+	erb :game
+end
+
+post '/game' do
+	erb :game
 end
