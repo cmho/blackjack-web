@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'sinatra'
+require 'pry'
 
 set :sessions, true
 
@@ -95,16 +96,18 @@ helpers do
 	def calculate_total(hand)
 		total = 0
 		ace_count = 0
+
 		hand.each do |card|
 			value = card[1]
 			if value == "ace"
 				total += 11
 				ace_count += 1
-			elsif value == ("jack" or "queen" or "king")
+			elsif value == "jack" or value == "queen" or value == "king"
 				total += 10
 			else
 				total += value
 			end
+
 			if ace_count > 1 and total > 21
 				total -= (ace_count-1)*10
 			end
