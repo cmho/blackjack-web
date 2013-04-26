@@ -57,6 +57,7 @@ helpers do
 				session[:current_winner] = "tie"
 			else
 				session[:current_winner] = "player"
+				session[:player_wins] += 1
 			end
 		elsif session[:dealer_status] == 1
 			session[:current_winner] = "dealer"
@@ -64,6 +65,7 @@ helpers do
 			if session[:dealer_status] == 2
 				if session[:player_hand].length < session[:dealer_hand].length
 					session[:current_winner] = "player"
+					session[:player_wins] += 1
 				elsif session[:playerhand.length] > session[:dealer_hand].length
 					session[:current_winner] = "dealer"
 				else
@@ -71,10 +73,12 @@ helpers do
 				end
 			else
 				session[:current_winner] = "player"
+				session[:player_wins] += 1
 			end
 		elsif session[:player_status] == 3 and session[:dealer_status] == 3
 			if session[:player_score] > session[:dealer_score]
 				session[:current_winner] = "player"
+				session[:player_wins] += 1
 			elsif session[:dealer_score] > session[:player_score]
 				session[:current_winner] = "dealer"
 			else
@@ -84,6 +88,7 @@ helpers do
 			session[:current_winner] = "dealer"
 		elsif session[:player_status] != 4 and session[:dealer_status] == 4
 			session[:current_winner] = "player"
+			session[:player_wins] += 1
 		end
 	end
 
@@ -154,7 +159,6 @@ get '/game' do
 	end
 
 	determine_winner
-
 	erb :game
 end
 
@@ -172,7 +176,7 @@ post '/game' do
 	else
 		session[:dealer_status] = 3
 	end
-	erb :game
+	redirect :game
 end
 
 post '/new_game' do
@@ -184,5 +188,5 @@ post '/new_game' do
 
 	setup_game
 
-	erb :game
+	redirect :game
 end
