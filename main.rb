@@ -43,7 +43,7 @@ helpers do
 		images = ""
 		cards_in_hand = hand.length
 		hand.each_with_index do |card, i|
-			if i != cards_in_hand-1
+			if i == 0
 				images += "<img src='/images/cards/cover.jpg' class='img-rounded' />"
 			else
 				images += "<img src='/images/cards/#{get_card_image(card)}' class='img-rounded' />"
@@ -117,7 +117,11 @@ helpers do
 end
 
 get '/' do
-	erb :home
+	if session[:player_name].nil?
+		erb :new_player
+	else
+		erb :game
+	end
 end
 
 get '/new_player' do

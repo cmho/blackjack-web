@@ -1,0 +1,32 @@
+body {
+	text-align: center;
+}
+
+.container {
+	width: 740px;
+	padding: 20px;
+	margin: 20px auto;
+	background-color: #FFF;
+	border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border: 5px #ba8b5d solid;
+}
+
+h2, h3 {
+	font-variant: small-caps;
+}
+
+h3 {
+	border-bottom: 1px #000 solid;
+}
+
+b, strong {
+	font-variant: small-caps;
+}
+
+.img-rounded {
+	padding: 5px;
+	border: 1px #CCC solid;
+	margin-right: 10px;
+}

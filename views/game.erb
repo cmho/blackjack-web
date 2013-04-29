@@ -1,24 +1,28 @@
 <% unless session[:current_winner].nil? %>
 	<% if session[:current_winner] == "player" %>
-		<h1 class="text-success">Congratulations, <%= session[:player_name] %>, you have won!</h1>
+		<h2 class="text-success">Congratulations, <%= session[:player_name] %>, you have won!</h2>
 	<% elsif session[:current_winner] == "dealer" %>
-		<h1 class="text-error">Sorry, <%= session[:player_name] %>, you've lost this round.</h1>
+		<h2 class="text-error">Sorry, <%= session[:player_name] %>, you've lost this round.</h2>
 	<% else %>
-		<h1 class="text-warning">This round has concluded in a tie.</h1>
+		<h2 class="text-warning">This round has concluded in a tie.</h2>
 	<% end %>
 <% end %>
 
-<h2><%= session[:player_name] %>, here's your hand:</h2>
+<h3><%= session[:player_name] %>, here's your hand:</h3>
 
 <div class="cards">
 	<%= print_hand(session[:player_hand]) %>
 	<p><strong><% if session[:current_winner].nil? %>Current Total:<% else %>Your Final Score:<% end %></strong> <%= session[:player_score] %></p>
 </div>
 <br />
-<p><strong>Here's the dealer's hand:</strong></p>
+<h3>Here's the dealer's hand:</h3>
 <div class="cards">
-	<%= print_hand(session[:dealer_hand]) %>
-	<p><strong><% if session[:current_winner].nil? %>Dealer's Score:<% else %>Dealer's Final Score:<% end %></strong> <%= session[:dealer_score] %></p>
+	<% unless session[:current_winner].nil? %>
+		<%= print_hand(session[:dealer_hand]) %>
+	<% else %>
+		<%= print_dealer_hand %>
+	<% end %>
+	<% unless session[:current_winner].nil? %><p><strong>Dealer's Final Score:</strong> <%= session[:dealer_score] %></p><% end %>
 </div>
 <br /><br />
 <% if session[:current_winner].nil? %>
