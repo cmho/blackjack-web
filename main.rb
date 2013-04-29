@@ -76,6 +76,8 @@ helpers do
 				session[:current_winner] = "player"
 				session[:player_wins] += 1
 			end
+		elsif session[:dealer_status] == 2
+			session[:current_winner] = "dealer"
 		elsif session[:player_status] == 3 and session[:dealer_status] == 3
 			if session[:player_score] > session[:dealer_score]
 				session[:current_winner] = "player"
@@ -120,7 +122,7 @@ get '/' do
 	if session[:player_name].nil?
 		erb :new_player
 	else
-		erb :game
+		redirect '/game'
 	end
 end
 
@@ -138,16 +140,43 @@ post '/new_player' do
 	session[:player_score] = 0
 	session[:player_wins] = 0
 	session[:player_status] = 0
+	session[:player_money] = 500
 	session[:dealer_score] = 0
 	session[:dealer_status] = 0
 	session[:current_winner] = nil
 	# Do setup tasks
 	setup_game
 	# Redirect to gameplay
+	redirect '/enter_bet'
+end
+
+get '/enter_bet' do
+	if session[:player_name].nil?
+		redirect '/new_player'
+	else
+		erb :enter_bet
+	end
+end
+
+post '/enter_bet' do
+	if params[:bet].nil?
+		@error = "You need to enter an integer."
+		halt erb(:enter_bet)
+	elsif not(params[:bet].to_i > 0)
+		@error = "Your bet needs to be more than zero."
+		halt erb(:enter_bet)
+	elsif params[:bet].to_i > session[:player_money]
+		@error = "You can't bet more money than you have."
+		halt erb(:enter_bet)
+	end
+
+	session[:player_bet] = params[:bet].to_i
+
 	redirect '/game'
 end
 
 get '/game' do
+
 	session[:player_score] = calculate_total(session[:player_hand])
 	if session[:player_score] == 21 and session[:player_hand].length == 2
 		session[:player_status] = 1
@@ -156,6 +185,7 @@ get '/game' do
 	elsif session[:player_score] > 21
 		session[:player_status] = 4
 	end
+
 	session[:dealer_score] = calculate_total(session[:dealer_hand])
 	if session[:dealer_score] == 21 and session[:dealer_hand].length == 2
 		session[:dealer_status] = 1
@@ -166,6 +196,13 @@ get '/game' do
 	end
 
 	determine_winner
+
+	if session[:current_winner] == "player"
+		session[:player_money] += session[:player_bet]
+	elsif session[:current_winner] == "dealer"
+		session[:player_money] -= session[:player_bet]
+	end
+
 	erb :game
 end
 
@@ -183,7 +220,7 @@ post '/game' do
 	else
 		session[:dealer_status] = 3
 	end
-	redirect :game
+	redirect '/game'
 end
 
 post '/new_game' do
@@ -192,8 +229,22 @@ post '/new_game' do
 	session[:player_status] = 0
 	session[:dealer_status] = 0
 	session[:current_winner] = nil
+	session[:player_bet] = 0
 
 	setup_game
 
-	redirect :game
+	redirect '/enter_bet'
+end
+
+post '/reset' do
+	session[:player_name] = 0
+	session[:player_wins] = 0
+	session[:player_status] = 0
+	session[:player_hand] = []
+	session[:player_score] = 0
+	session[:player_money] = 0
+	session[:player_bet] = 0
+	session[:current_winner] = nil
+
+	redirect :new_player
 end

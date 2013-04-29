@@ -26,11 +26,15 @@
 </div>
 <br /><br />
 <% if session[:current_winner].nil? %>
-<form action="/game" method="POST">
-	<input type="submit" name="action" class="btn btn-success" value="Stay" /> <input type="submit" name="action" class="btn btn-danger" value="Hit" />
-</form>
+	<form action="/game" method="POST">
+		<input type="submit" name="action" class="btn btn-success" value="Stay" /> <input type="submit" name="action" class="btn btn-danger" value="Hit" />
+	</form>
 <% else %>
-<p><strong>Your wins so far:</strong> <%= session[:player_wins] %></p>
-<form action="/new_game" method="POST">
-	<input type="submit" class="btn btn-primary" value="Start New Game" />
+	<p><strong>Your wins so far:</strong> <%= session[:player_wins] %></p>
+	<form action="/new_game" method="POST">
+		<input type="submit" class="btn btn-primary" value="Start New Game" />
+	</form>
+	<form action="/reset" method="POST">
+		<input type="submit" class="btn btn-danger" value="Reset Everything" />
+	</form>
 <% end %>

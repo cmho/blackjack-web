@@ -9,6 +9,7 @@
   <body style="padding-top: 50px;">
     <h1><img src="/images/header.png" alt="Blackjack" width="700" height="145" /></h1>
     <div class="container">
+      Current Winner: <%= session[:current_winner] %>
       <%if @error %>
         <div class="alert alert-error"><%=@error%></div>
       <% end %>
