@@ -61,6 +61,24 @@ helpers do
 	end
 
 	def determine_winner
+		session[:player_score] = calculate_total(session[:player_hand])
+		if session[:player_score] == 21 and session[:player_hand].length == 2
+			session[:player_status] = 1
+		elsif session[:player_score] == 21
+			session[:player_status] = 2
+		elsif session[:player_score] > 21
+			session[:player_status] = 4
+		end
+
+		session[:dealer_score] = calculate_total(session[:dealer_hand])
+		if session[:dealer_score] == 21 and session[:dealer_hand].length == 2
+			session[:dealer_status] = 1
+		elsif session[:dealer_score] == 21
+			session[:dealer_status] = 2
+		elsif session[:dealer_score] > 21
+			session[:dealer_status] = 4
+		end
+
 		if session[:player_status] == 1
 			if session[:dealer_status] == 1
 				session[:current_winner] = "tie"
@@ -100,6 +118,14 @@ helpers do
 		elsif session[:player_status] != 4 and session[:dealer_status] == 4
 			session[:current_winner] = "player"
 			session[:player_wins] += 1
+		end
+	end
+
+	def process_bet
+		if session[:current_winner] == "player"
+			session[:player_money] += session[:player_bet]
+		elsif session[:current_winner] == "dealer"
+			session[:player_money] -= session[:player_bet]
 		end
 	end
 
@@ -185,24 +211,6 @@ end
 
 get '/game' do
 
-	session[:player_score] = calculate_total(session[:player_hand])
-	if session[:player_score] == 21 and session[:player_hand].length == 2
-		session[:player_status] = 1
-	elsif session[:player_score] == 21
-		session[:player_status] = 2
-	elsif session[:player_score] > 21
-		session[:player_status] = 4
-	end
-
-	session[:dealer_score] = calculate_total(session[:dealer_hand])
-	if session[:dealer_score] == 21 and session[:dealer_hand].length == 2
-		session[:dealer_status] = 1
-	elsif session[:dealer_score] == 21
-		session[:dealer_status] = 2
-	elsif session[:dealer_score] > 21
-		session[:dealer_status] = 4
-	end
-
 	determine_winner
 
 	if session[:current_winner] == "player"
@@ -232,6 +240,10 @@ post '/game/hit' do
 
 	dealer_turn
 
+	determine_winner
+
+	process_bet
+
 	erb :game, :layout => false
 end
 
@@ -239,6 +251,10 @@ post '/game/stay' do
 	session[:player_status] = 3
 
 	dealer_turn
+
+	determine_winner
+
+	process_bet
 
 	erb :game, :layout => false
 end
