@@ -1,3 +1,4 @@
+<div id="game">
 <% unless session[:current_winner].nil? %>
 	<% if session[:current_winner] == "player" %>
 		<h2 class="text-success">Congratulations, <%= session[:player_name] %>, you have won!</h2>
@@ -26,8 +27,8 @@
 </div>
 <br /><br />
 <% if session[:current_winner].nil? %>
-	<form action="/game" method="POST">
-		<input type="submit" name="action" class="btn btn-success" value="Stay" /> <input type="submit" name="action" class="btn btn-danger" value="Hit" />
+	<form action="/game" method="POST" id="action-form">
+		<input type="submit" name="action" class="btn btn-success" id="btn-stay" value="Stay" /> <input type="submit" name="action" class="btn btn-danger" id="btn-hit" value="Hit" />
 	</form>
 <% else %>
 	<p><strong>Your wins so far:</strong> <%= session[:player_wins] %></p>
@@ -38,3 +39,4 @@
 		<input type="submit" class="btn btn-danger" value="Reset Everything" />
 	</form>
 <% end %>
+</div>

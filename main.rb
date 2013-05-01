@@ -52,6 +52,14 @@ helpers do
 		return images
 	end
 
+	def dealer_turn
+		if session[:dealer_score] < 17
+			session[:dealer_hand] += session[:deck].pop(1)
+		else
+			session[:dealer_status] = 3
+		end
+	end
+
 	def determine_winner
 		if session[:player_status] == 1
 			if session[:dealer_status] == 1
@@ -214,13 +222,25 @@ post '/game' do
 		session[:player_status] = 3
 	end
 
-	# Dealer turn
-	if session[:dealer_score] < 17
-		session[:dealer_hand] += session[:deck].pop(1)
-	else
-		session[:dealer_status] = 3
-	end
+	dealer_turn
+
 	redirect '/game'
+end
+
+post '/game/hit' do
+	session[:player_hand] += session[:deck].pop(1)
+
+	dealer_turn
+
+	erb :game, :layout => false
+end
+
+post '/game/stay' do
+	session[:player_status] = 3
+
+	dealer_turn
+
+	erb :game, :layout => false
 end
 
 post '/new_game' do
